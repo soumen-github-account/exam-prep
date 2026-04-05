@@ -1,9 +1,11 @@
 import { useState, useContext } from "react";
 import axios from "axios";
 import { AppContext } from "../contexts/AppContext";
+import { RiLoader2Fill } from "react-icons/ri";
 
 const AddQuestion = () => {
   const { backendUrl } = useContext(AppContext);
+  const [loading, setLoading] = useState(false)
 
   const [form, setForm] = useState({
     questionText: "",
@@ -48,6 +50,7 @@ const AddQuestion = () => {
 
   // Submit
   const submitHandler = async () => {
+    setLoading(true)
     try {
       const formData = new FormData();
       formData.append("questionText", form.questionText);
@@ -87,6 +90,8 @@ const AddQuestion = () => {
     } catch (error) {
       console.log(error);
       alert("Error adding question");
+    } finally{
+        setLoading(false)
     }
   };
 
@@ -196,7 +201,15 @@ const AddQuestion = () => {
           onClick={submitHandler}
           className="bg-blue-500 text-white w-full py-2 rounded-lg hover:bg-blue-600"
         >
-          Add Question
+            {
+                loading ? 
+
+                <span className="flex w-full items-center justify-center gap-3">
+                    <RiLoader2Fill className="text-[20px] animate-spin transition-all duration-300" />
+                    <p>Please wait...</p>
+                </span>
+                : "Add Question"
+            }
         </button>
       </div>
     </div>
