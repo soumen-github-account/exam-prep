@@ -254,3 +254,107 @@ export const submitExam = async (req, res) => {
     }
 };
 
+
+// export const addQuestion = async (req, res) => {
+
+//     try {
+//         const {
+//             questionText,
+//             questionImage,
+//             questionType,
+//             options,
+//             correctAnswers,
+//             difficulty,
+//             marks,
+//             negativeMarks
+//         } = req.body;
+
+//         // Validation
+//         if (!questionText || !questionType || !options || !correctAnswers) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "Missing required fields"
+//             });
+//         }
+
+//         if (options.length !== 4) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "Exactly 4 options required"
+//             });
+//         }
+
+//         // MCQ must have 1 correct answer
+//         if (questionType === "MCQ" && correctAnswers.length !== 1) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "MCQ must have exactly 1 correct answer"
+//             });
+//         }
+
+//         const question = await QuestionModel.create({
+//             questionText,
+//             questionImage,
+//             questionType,
+//             options,
+//             correctAnswers,
+//             difficulty,
+//             marks,
+//             negativeMarks
+//         });
+
+//         res.status(201).json({
+//             success: true,
+//             question
+//         });
+
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({
+//             success: false,
+//             message: "Server error"
+//         });
+//     }
+// };
+
+export const addQuestion = async (req, res) => {
+    try {
+        const {
+            questionText,
+            questionType,
+            options,
+            correctAnswers,
+            difficulty,
+            marks,
+            negativeMarks
+        } = req.body;
+
+        let imageUrl = null;
+
+        if (req.file) {
+            imageUrl = req.file.path; // Cloudinary URL
+        }
+
+        const question = await QuestionModel.create({
+            questionText,
+            questionImage: imageUrl,
+            questionType,
+            options: JSON.parse(options),
+            correctAnswers: JSON.parse(correctAnswers),
+            difficulty,
+            marks,
+            negativeMarks
+        });
+
+        res.json({
+            success: true,
+            question
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false
+        });
+    }
+};
